@@ -25,7 +25,7 @@ services:
       - backend.env
     environment:
       - JAEGER_AGENT_HOST=jaeger
-      - DASHBOARD_URL=http://49.12.226.12:9000/
+      - DASHBOARD_URL=https://saleor-dashboard.victorbeysseriat.fr/
       - ALLOWED_HOSTS=localhost,api,49.12.226.12
 
   dashboard:
