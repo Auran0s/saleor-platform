@@ -46,6 +46,9 @@ services:
     restart: unless-stopped
     networks:
       - caddy
+    labels:
+      caddy: saleor-db.victorbeysseriat.fr
+      caddy.reverse_proxy: "{{upstreams 5432}}"
     volumes:
       - saleor-db:/var/lib/postgresql/data
       - ./replica_user.sql:/docker-entrypoint-initdb.d/replica_user.sql
@@ -60,6 +63,9 @@ services:
     restart: unless-stopped
     networks:
       - caddy
+    labels:
+      caddy: saleor-redis.victorbeysseriat.fr
+      caddy.reverse_proxy: "{{upstreams 6379}}"
     volumes:
       - saleor-redis:/data
 
