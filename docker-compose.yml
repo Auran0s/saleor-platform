@@ -7,10 +7,7 @@ services:
       - 8000:8000
     restart: unless-stopped
     networks:
-      - caddy
-    labels:
-      caddy: saleor-api.victorbeysseriat.fr
-      caddy.reverse_proxy: "{{upstreams 8000}}"
+      - saleor-backend-tier
     stdin_open: true
     tty: true
     depends_on:
@@ -26,18 +23,13 @@ services:
     environment:
       - JAEGER_AGENT_HOST=jaeger
       - DASHBOARD_URL=http://localhost:9000/
-      - ALLOWED_HOSTS=localhost,api,saleor-api.victorbeysseriat.fr
+      - ALLOWED_HOSTS=localhost,api
 
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:latest
     ports:
-      - 9000:9000
+      - 9000:80
     restart: unless-stopped
-    networks:
-      - caddy
-    labels:
-      caddy: saleor-dashboard.victorbeysseriat.fr
-      caddy.reverse_proxy: "{{upstreams 9000}}"
 
   db:
     image: library/postgres:13-alpine
@@ -45,16 +37,13 @@ services:
       - 5432:5432
     restart: unless-stopped
     networks:
-      - caddy
-    labels:
-      caddy: saleor-db.victorbeysseriat.fr
-      caddy.reverse_proxy: "{{upstreams 5432}}"
+      - saleor-backend-tier
     volumes:
       - saleor-db:/var/lib/postgresql/data
       - ./replica_user.sql:/docker-entrypoint-initdb.d/replica_user.sql
     environment:
-      POSTGRES_USER: saleor
-      POSTGRES_PASSWORD: saleor
+      - POSTGRES_USER=saleor
+      - POSTGRES_PASSWORD=saleor
 
   redis:
     image: library/redis:7.0-alpine
@@ -62,10 +51,7 @@ services:
       - 6379:6379
     restart: unless-stopped
     networks:
-      - caddy
-    labels:
-      caddy: saleor-redis.victorbeysseriat.fr
-      caddy.reverse_proxy: "{{upstreams 6379}}"
+      - saleor-backend-tier
     volumes:
       - saleor-redis:/data
 
@@ -74,7 +60,7 @@ services:
     command: celery -A saleor --app=saleor.celeryconf:app worker --loglevel=info -B
     restart: unless-stopped
     networks:
-      - caddy
+      - saleor-backend-tier
     env_file:
       - common.env
       - backend.env
@@ -97,10 +83,7 @@ services:
       - "9411:9411"
     restart: unless-stopped
     networks:
-      - caddy
-    labels:
-      caddy: saleor-jaeger.victorbeysseriat.fr
-      caddy.reverse_proxy: "{{upstreams 16686}}"
+      - saleor-backend-tier
     volumes:
       - type: tmpfs
         target: /tmp
@@ -112,10 +95,7 @@ services:
       - 8025:8025 # web ui. Visit http://localhost:8025/ to check emails
     restart: unless-stopped
     networks:
-      - caddy
-    labels:
-      caddy: saleor-mail.victorbeysseriat.fr
-      caddy.reverse_proxy: "{{upstreams 8025}}"
+      - saleor-backend-tier
 
 volumes:
   saleor-db:
@@ -125,6 +105,5 @@ volumes:
   saleor-media:
 
 networks:
-  caddy:
-    external: true
+  saleor-backend-tier:
     driver: bridge
