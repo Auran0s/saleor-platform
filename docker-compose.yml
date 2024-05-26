@@ -26,7 +26,7 @@ services:
     environment:
       - JAEGER_AGENT_HOST=jaeger
       - DASHBOARD_URL=http://localhost:9000/
-      - ALLOWED_HOSTS=localhost,api
+      - ALLOWED_HOSTS=localhost,api,saleor-api.victorbeysseriat.fr
 
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:latest
@@ -121,3 +121,4 @@ volumes:
 networks:
   caddy:
     external: true
+    driver: bridge
