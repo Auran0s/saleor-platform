@@ -8,6 +8,10 @@ services:
     restart: unless-stopped
     networks:
       - saleor-backend-tier
+      - caddy
+    labels:
+      caddy: saleor-api.victorbeysseriat.fr
+      caddy.reverse_proxy: "{{upstreams 8000}}"
     stdin_open: true
     tty: true
     depends_on:
@@ -28,8 +32,13 @@ services:
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:latest
     ports:
-      - 9000:80
+      - 9000:9000
     restart: unless-stopped
+    networks:
+      - caddy
+    labels:
+      caddy: saleor-dashboard.victorbeysseriat.fr
+      caddy.reverse_proxy: "{{upstreams 9000}}"
 
   db:
     image: library/postgres:13-alpine
@@ -84,6 +93,10 @@ services:
     restart: unless-stopped
     networks:
       - saleor-backend-tier
+      - caddy
+    labels:
+      caddy: saleor-jaeger.victorbeysseriat.fr
+      caddy.reverse_proxy: "{{upstreams 16686}}"
     volumes:
       - type: tmpfs
         target: /tmp
@@ -96,6 +109,10 @@ services:
     restart: unless-stopped
     networks:
       - saleor-backend-tier
+      - caddy
+    labels:
+      caddy: saleor-mail.victorbeysseriat.fr
+      caddy.reverse_proxy: "{{upstreams 8025}}"
 
 volumes:
   saleor-db:
@@ -107,3 +124,5 @@ volumes:
 networks:
   saleor-backend-tier:
     driver: bridge
+  caddy:
+    external: true
