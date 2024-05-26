@@ -7,7 +7,6 @@ services:
       - 8000:8000
     restart: unless-stopped
     networks:
-      - saleor-backend-tier
       - caddy
     labels:
       caddy: saleor-api.victorbeysseriat.fr
@@ -46,7 +45,7 @@ services:
       - 5432:5432
     restart: unless-stopped
     networks:
-      - saleor-backend-tier
+      - caddy
     volumes:
       - saleor-db:/var/lib/postgresql/data
       - ./replica_user.sql:/docker-entrypoint-initdb.d/replica_user.sql
@@ -60,7 +59,7 @@ services:
       - 6379:6379
     restart: unless-stopped
     networks:
-      - saleor-backend-tier
+      - caddy
     volumes:
       - saleor-redis:/data
 
@@ -69,7 +68,7 @@ services:
     command: celery -A saleor --app=saleor.celeryconf:app worker --loglevel=info -B
     restart: unless-stopped
     networks:
-      - saleor-backend-tier
+      - caddy
     env_file:
       - common.env
       - backend.env
@@ -92,7 +91,6 @@ services:
       - "9411:9411"
     restart: unless-stopped
     networks:
-      - saleor-backend-tier
       - caddy
     labels:
       caddy: saleor-jaeger.victorbeysseriat.fr
@@ -108,7 +106,6 @@ services:
       - 8025:8025 # web ui. Visit http://localhost:8025/ to check emails
     restart: unless-stopped
     networks:
-      - saleor-backend-tier
       - caddy
     labels:
       caddy: saleor-mail.victorbeysseriat.fr
@@ -122,7 +119,5 @@ volumes:
   saleor-media:
 
 networks:
-  saleor-backend-tier:
-    driver: bridge
   caddy:
     external: true
