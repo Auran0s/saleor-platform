@@ -53,8 +53,8 @@ services:
       - saleor-db:/var/lib/postgresql/data
       - ./replica_user.sql:/docker-entrypoint-initdb.d/replica_user.sql
     environment:
-      - POSTGRES_USER=saleor
-      - POSTGRES_PASSWORD=saleor
+      POSTGRES_USER: saleor
+      POSTGRES_PASSWORD: saleor
 
   redis:
     image: library/redis:7.0-alpine
