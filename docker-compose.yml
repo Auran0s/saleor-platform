@@ -37,6 +37,7 @@ services:
       - API_URl=https://saleor-api.victorbeysseriat.fr/graphql/
     networks:
       - caddy
+      - saleor-backend-tier
     labels:
       caddy: saleor-dashboard.victorbeysseriat.fr
       caddy.reverse_proxy: "{{upstreams 9000}}"
