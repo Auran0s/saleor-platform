@@ -34,7 +34,7 @@ services:
     ports:
       - 9000:80
     environment:
-      - API_URI=https://saleor-api.victorbeysseriat.fr/graphql/
+      - API_URl=https://saleor-api.victorbeysseriat.fr/graphql/
     networks:
       - caddy
     labels:
